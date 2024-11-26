@@ -2,7 +2,7 @@
 
 namespace SQL;
 
-public class Repository(SalesDbContext _context)
+public class Repository(SalesDbContext context)
 {
    /// <summary>
         /// Завдання 1: Порахувати кількість проданого товару.
@@ -10,7 +10,7 @@ public class Repository(SalesDbContext _context)
         public async Task<int> Task1()
         {
             // Підрахунок загальної кількості проданих товарів
-            var totalQuantity = await _context.SaleItems.SumAsync(x => x.Quantity);
+            var totalQuantity = await context.SaleItems.SumAsync(x => x.Quantity);
             return totalQuantity;
         }
 
@@ -20,7 +20,7 @@ public class Repository(SalesDbContext _context)
         public async Task<decimal> Task2()
         {
             // Підрахунок загальної вартості проданих товарів
-            var totalValue = await _context.SaleItems.SumAsync(x => x.UnitPrice * x.Quantity);
+            var totalValue = await context.SaleItems.SumAsync(x => x.UnitPrice * x.Quantity);
             return totalValue;
         }
 
@@ -30,7 +30,7 @@ public class Repository(SalesDbContext _context)
         public async Task<decimal> Task3(DateTime startDate, DateTime endDate)
         {
             // Підрахунок вартості проданих товарів за вказаний період
-            var totalValue = await _context.SaleItems
+            var totalValue = await context.SaleItems
                 .Where(si => si.Sale.SaleDate >= startDate && si.Sale.SaleDate <= endDate)
                 .SumAsync(x => x.UnitPrice * x.Quantity);
             return totalValue;
@@ -42,7 +42,7 @@ public class Repository(SalesDbContext _context)
         public async Task<int> Task4(int productId, int storeId, DateTime startDate, DateTime endDate)
         {
             // Підрахунок кількості придбаного товару A в магазині B за період C
-            var totalQuantity = await _context.SaleItems
+            var totalQuantity = await context.SaleItems
                 .Where(si => si.ProductId == productId &&
                              si.Sale.StoreId == storeId &&
                              si.Sale.SaleDate >= startDate &&
@@ -57,7 +57,7 @@ public class Repository(SalesDbContext _context)
         public async Task<int> Task5(int productId, DateTime startDate, DateTime endDate)
         {
             // Підрахунок кількості придбаного товару A у всіх магазинах за період C
-            var totalQuantity = await _context.SaleItems
+            var totalQuantity = await context.SaleItems
                 .Where(si => si.ProductId == productId &&
                              si.Sale.SaleDate >= startDate &&
                              si.Sale.SaleDate <= endDate)
@@ -71,7 +71,7 @@ public class Repository(SalesDbContext _context)
         public async Task<decimal> Task6(DateTime startDate, DateTime endDate)
         {
             // Підрахунок загальної виручки за вказаний період
-            var totalRevenue = await _context.SaleItems
+            var totalRevenue = await context.SaleItems
                 .Where(si => si.Sale.SaleDate >= startDate && si.Sale.SaleDate <= endDate)
                 .SumAsync(x => x.UnitPrice * x.Quantity);
             return totalRevenue;
@@ -83,7 +83,7 @@ public class Repository(SalesDbContext _context)
         public async Task<List<(string Product1, string Product2, int Count)>> Task7(DateTime startDate, DateTime endDate)
         {
             // Завантаження даних у пам'ять
-            var saleItems = await _context.SaleItems
+            var saleItems = await context.SaleItems
                 .Where(si => si.Sale.SaleDate >= startDate && si.Sale.SaleDate <= endDate)
                 .Select(si => new { si.SaleId, si.ProductId })
                 .ToListAsync();
@@ -119,7 +119,7 @@ public class Repository(SalesDbContext _context)
 
             var productIds = topPairs.SelectMany(p => new[] { p.Key.Item1, p.Key.Item2 }).Distinct();
 
-            var productNames = await _context.Products
+            var productNames = await context.Products
                 .Where(p => productIds.Contains(p.ProductId))
                 .ToDictionaryAsync(p => p.ProductId, p => p.Name);
 
@@ -138,7 +138,7 @@ public class Repository(SalesDbContext _context)
         public async Task<List<(string Product1, string Product2, string Product3, int Count)>> Task8(DateTime startDate, DateTime endDate)
 {
     // Завантаження даних у пам'ять
-    var saleItems = await _context.SaleItems
+    var saleItems = await context.SaleItems
         .Where(si => si.Sale.SaleDate >= startDate && si.Sale.SaleDate <= endDate)
         .Select(si => new { si.SaleId, si.ProductId })
         .ToListAsync();
@@ -173,7 +173,7 @@ public class Repository(SalesDbContext _context)
 
     var productIds = topTriplets.SelectMany(p => new[] { p.Product1, p.Product2, p.Product3 }).Distinct();
 
-    var productNames = await _context.Products
+    var productNames = await context.Products
         .Where(p => productIds.Contains(p.ProductId))
         .ToDictionaryAsync(p => p.ProductId, p => p.Name);
 
@@ -193,7 +193,7 @@ public class Repository(SalesDbContext _context)
 public async Task<List<(string Product1, string Product2, string Product3, string Product4, int Count)>> Task9(DateTime startDate, DateTime endDate)
 {
     // Завантаження даних у пам'ять
-    var saleItems = await _context.SaleItems
+    var saleItems = await context.SaleItems
         .Where(si => si.Sale.SaleDate >= startDate && si.Sale.SaleDate <= endDate)
         .Select(si => new { si.SaleId, si.ProductId })
         .ToListAsync();
@@ -228,7 +228,7 @@ public async Task<List<(string Product1, string Product2, string Product3, strin
 
     var productIds = topQuadruplets.SelectMany(p => new[] { p.Product1, p.Product2, p.Product3, p.Product4 }).Distinct();
 
-    var productNames = await _context.Products
+    var productNames = await context.Products
         .Where(p => productIds.Contains(p.ProductId))
         .ToDictionaryAsync(p => p.ProductId, p => p.Name);
 
